@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // Lab: FETCH (Part-1)slide #7
+   // Lab: FETCH (Part-2)slide #8
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -41,6 +41,10 @@
       @0
          $reset = *reset;
          $pc[31:0] = >>1$reset ? 32'b0:>>1$pc + 32'd4;
+      @1   
+         $imem_rd_en = !$reset;
+         $imem_rd_addr[M4_IMEM_INDEX_CNT-1:0] = $pc[M4_IMEM_INDEX_CNT+1:2];
+         $instr[31:0] = $imem_rd_data[31:0] ;
 
 
 
