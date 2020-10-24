@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // Lab: FETCH (Part-2)slide #8
+   // Lab: Instructions Type Decode #10
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -45,6 +45,18 @@
          $imem_rd_en = !$reset;
          $imem_rd_addr[M4_IMEM_INDEX_CNT-1:0] = $pc[M4_IMEM_INDEX_CNT+1:2];
          $instr[31:0] = $imem_rd_data[31:0] ;
+         $is_i_instr = $instr[6:2] ==? 5'b0000x || 
+                                   ==? 5'b001x0 || 
+                                   ==? 5'b11001;
+                                   
+         $is_r_instr = $instr[6:2] ==? 5'b011x0 || 
+                                   ==? 5'b10100 || 
+                                   ==? 5'b01011;
+         $is_u_instr = $instr[6:2] ==? 5'b0x101;
+         $is_b_instr = $instr[6:2] ==? 5'b11000;
+         $is_s_instr = $instr[6:2] ==? 5'b0100x;
+         $is_j_instr = $instr[6:2] ==? 5'b11011;
+               
 
 
 
@@ -74,3 +86,4 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
