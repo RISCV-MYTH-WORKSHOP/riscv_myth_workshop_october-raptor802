@@ -40,7 +40,7 @@
             
             // 4 x 1 Multiplexer (Internally implemented by 3 seaparate 2x1 mux using Divide and conquer) 
              
-            $out[31:0] = $valid_or_reset ? ($op[1] ? ($op[0] ? $quot[31:0]:$prod[31:0]):($op[0] ? $diff[31:0]:$sum[31:0])):>>2$out[31:0]; 
+            $out[31:0] = $valid_or_reset ? ($op[1] ? ($op[0] ? $quot[31:0]:$prod[31:0]):($op[0] ? $diff[31:0]:$sum[31:0])):>>1$out[31:0]; 
          
 
 
