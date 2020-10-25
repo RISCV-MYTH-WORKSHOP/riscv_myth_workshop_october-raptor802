@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // Lab: Instructions  Decode Silde # 11
+   // Lab:  Silde # 12
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -62,12 +62,27 @@
                       $is_u_instr ? {$instr[31:12], 12'b0}:
                       $is_j_instr ? {{12{$instr[31]}}, $instr[19:12], $instr[20], $instr[30:21], 1'b0}:
                                         32'b0;
-         $rs2[4:0] = $instr[24:20];
-         $funct7[6:0] = $instr[31:25];
-         $funct3[2:0] = $instr[14:12];
-         $rs1[4:0] = $instr[19:15];
-         $rd[4:0] = $instr[11:7];
-         $opcode[6:0] = $instr[6:0];
+         $rs2_valid = $is_r_instr||$is_s_instr|| $is_b_instr;
+         ?$rs2_valid
+            $rs2[4:0] = $instr[24:20];
+         $rs1_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr ;
+         ?$rs1_valid
+            $rs1[4:0] = $instr[19:15];
+         $funct7_valid = $is_r_instr;
+         ?$funct7_valid
+            $funct7[6:0] = $instr[31:25];
+         $rd_valid = $is_r_instr||$is_i_instr|| $is_u_instr|| $is_j_instr ;
+         ?$rd_valid
+            $rd[4:0] = $instr[11:7];
+         $funct3_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr ;
+         ?$funct3_valid
+            $funct3[2:0] = $instr[14:12];
+         $opcode_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr || $is_u_instr|| $is_j_instr; 
+         ?$opcode_valid
+            $opcode[6:0] = $instr[6:0];
+         
+         
+         
                       
                       
 
@@ -99,4 +114,5 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
 
