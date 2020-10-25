@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // LAB: ALU SLIDE # 18
+   // LAB: REGISTER FILE WRITE SLIDE # 20
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -92,15 +92,12 @@
          $is_add  = $dec_bits ==? 11'bx_000_1110011;
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu $is_addi)
-         
+         // register file read signal assignments
          $rf_rd_index1[4:0] = $rs1;
          $rf_rd_index2[4:0] = $rs2;
          
          $rf_rd_en1 = $rs1_valid;
          $rf_rd_en2 = $rs2_valid;
-         $rf_wr_en = 1'b0;
-         $rf_wr_index[4:0] = 5'b0;
-         $rf_wr_data[31:0] = 32'b0;
          $src1_value[31:0] = $rf_rd_data1;
          $src2_value[31:0] = $rf_rd_data2;
          //ALU signal
@@ -108,6 +105,11 @@
                          $is_addi ? $src1_value + $imm:
                          $is_add ? $src2_value + $src2_value:
                             32'bx;
+         // register file write signal assignments
+         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid);
+         $rf_wr_index[4:0] = $rd;
+         $rf_wr_data[31:0] = $result;
+         
          
          
          
