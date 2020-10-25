@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // LAB: REGISTER FILE WRITE SLIDE # 20
+   // LAB: BRANCHES SLIDE # 21
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -109,6 +109,15 @@
          $rf_wr_en = ($rd!= 5'b0)&&($rd_valid);
          $rf_wr_index[4:0] = $rd;
          $rf_wr_data[31:0] = $result;
+         //Branch Instruction Implementation
+         $taken_br = 
+                     $is_beq ? ($src1_value == $src2_value):
+                     $is_bne ? ($src1_value != $src2_value):
+                     $is_blt ? ($src1_value < $src2_value)^($src1_value != $src2_value):
+                     $is_bge ? ($src1_value >= $src2_value)^($src1_value != $src2_value):
+                     $is_bltu ? ($src1_value < $src2_value):
+                     $is_bgeu ? ($src1_value >= $src2_value):
+                        1'b0;
          
          
          
