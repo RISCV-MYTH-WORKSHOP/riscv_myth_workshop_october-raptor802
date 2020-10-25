@@ -88,8 +88,8 @@
          $is_bge = $dec_bits ==? 11'bx_101_1100011;
          $is_bltu = $dec_bits ==? 11'bx_110_1100011;
          $is_bgeu = $dec_bits ==? 11'bx_111_1100011;
-         $is_addi = $dec_bits ==? 11'bx_000_1110011;
-         $is_add  = $dec_bits ==? 11'bx_000_1110011;
+         $is_addi = $dec_bits ==? 11'bx_000_0010011;
+         $is_add  = $dec_bits ==? 11'bx_000_0110011;
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu $is_addi)
          // register file read signal assignments
@@ -113,11 +113,12 @@
          $taken_br = 
                      $is_beq ? ($src1_value == $src2_value):
                      $is_bne ? ($src1_value != $src2_value):
-                     $is_blt ? ($src1_value < $src2_value)^($src1_value != $src2_value):
-                     $is_bge ? ($src1_value >= $src2_value)^($src1_value != $src2_value):
+                     $is_blt ? ($src1_value < $src2_value)^($src1_value[31] != $src2_value[31]):
+                     $is_bge ? ($src1_value >= $src2_value)^($src1_value[31] != $src2_value[31]):
                      $is_bltu ? ($src1_value < $src2_value):
                      $is_bgeu ? ($src1_value >= $src2_value):
                         1'b0;
+         $br_tgt_pc = $pc + $imm;
          
          
          
