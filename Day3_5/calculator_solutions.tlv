@@ -2,7 +2,7 @@
 \SV
    // =========================================
    // LAB: 2-CYCLE CALCULATOR WITH VALIDITY _Final Version_3
-   // Vizualized in VIZ tab: Giving correct outputs
+   // Visualised in Viz tab: giving correct outputs
    // =========================================
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/bd1f186fde018ff9e3fd80597b7397a1c862cf15/tlv_lib/calculator_shell_lib.tlv'])
