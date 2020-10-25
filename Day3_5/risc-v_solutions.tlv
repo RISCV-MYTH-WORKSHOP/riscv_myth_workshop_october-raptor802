@@ -77,9 +77,8 @@
          $funct3_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr ;
          ?$funct3_valid
             $funct3[2:0] = $instr[14:12];
-         $opcode_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr || $is_u_instr|| $is_j_instr; 
-         ?$opcode_valid
-            $opcode[6:0] = $instr[6:0];
+         
+         $opcode[6:0] = $instr[6:0];
          
          
          
