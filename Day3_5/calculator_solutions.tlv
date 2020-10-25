@@ -1,8 +1,9 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // =========================================
-   // LAB: 2-CYCLE CALCULATOR WITH VALIDITY _Final Version_3
-   // Visualised in Viz tab: giving correct outputs
+   // Final Lab Day -3 
+   //LAB:  2-CYCLE CALCULATOR WITH SINGLE VALUE MEMORY
+   // Visualised in Viz tabs: giving correct outputs
    // =========================================
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/bd1f186fde018ff9e3fd80597b7397a1c862cf15/tlv_lib/calculator_shell_lib.tlv'])
@@ -18,9 +19,7 @@
          
          $valid = $reset? 1'b0: >>1$valid + 1'b1;
          $valid_or_reset = $valid || $reset;
-         //$valid_or_reset =$valid || $reset;
-         $cnt[31:0] = $reset ? '0                   // 1 if reset
-                       : >>1$cnt + 1;  // otherwise add 1 to previous count 
+         
          $val2[31:0] = $rand2[3:0];// to keep input value of lower magnitude
          $val1[31:0] = >>2$out;
          
@@ -31,10 +30,10 @@
       ?$valid_or_reset
          @1
             
-            //calculator computation
             
             
             
+            // calculator computation
             $sum[31:0] = $val1[31:0] + $val2[31:0];
             $diff[31:0] = $val1[31:0] - $val2[31:0];
             $prod[31:0] = $val1[31:0] * $val2[31:0];
@@ -45,9 +44,18 @@
       
          @2
             
-            // 4 x 1 Multiplexer (Internally implemented by 3 seaparate 2x1 mux using Divide and conquer) 
-            $out[31:0] = $reset ? 32'b0 :($op[1] ? ($op[0] ? $quot[31:0]:$prod[31:0]):($op[0] ? $diff[31:0]:$sum[31:0]));
-
+            // 4 x 1 Multiplexer  
+            $out[31:0] = $reset ? 32'b0:
+                           ($op[2:0] == 3'b000)? $sum:
+                           ($op[2:0] == 3'b001)? $diff:
+                           ($op[2:0] == 3'b010)? $prod:
+                           ($op[2:0] == 3'b011)? $quot:
+                           ($op[2:0] == 3'b100)? >>2$mem:>>2$out;
+            // Mem Mux
+            $mem[31:0] = $reset ? 32'b0:
+                           ($op[2:0] == 3'b101) ? $val1[31:0]: >>2$mem;
+                           
+            
 
 
       // Macro instantiations for calculator visualization(disabled by default).
