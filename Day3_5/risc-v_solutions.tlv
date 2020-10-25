@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day-5
-  //LAB: 3-Cycle Valid Slide # 33
+  //LAB: 3-Cycle RISC -V PART -1 Slide # 36
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -45,10 +45,12 @@
          $valid = $reset ? 1'b0:
                   $start ? 1'b1:
                   >>3$valid;
+         
          $pc[31:0] = 
                      >>1$reset ? 32'b0:
-                     >>1$taken_br ? >>1$br_tgt_pc:
-                     >>1$pc + 32'd4;
+                     >>3$taken_br ? >>3$br_tgt_pc:
+                     >>3$inc_pc;
+         $inc_pc[31:0] = $pc + 32d'd4; 
                      
       @1   
          $imem_rd_en =    !$reset;
@@ -115,7 +117,7 @@
                          $is_add ? $src1_value + $src2_value:
                             32'bx;
          // register file write signal assignments
-         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid);
+         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid)&&($valid);// write only for valid instructions
          $rf_wr_index[4:0] = $rd;
          $rf_wr_data[31:0] = $result;
          //Branch Instruction Implementation
@@ -127,6 +129,7 @@
                      $is_bltu ? ($src1_value < $src2_value):
                      $is_bgeu ? ($src1_value >= $src2_value):
                         1'b0;
+         $valid_taken_br = ($valid) && ($taken_br);
          $br_tgt_pc[31:0] = $pc + $imm;
          
          
