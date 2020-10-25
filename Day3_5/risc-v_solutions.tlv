@@ -1,6 +1,6 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // LAB: REGISTER FILE READ (PART -2) SLIDE # 17
+   // LAB: ALU SLIDE # 18
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -101,8 +101,13 @@
          $rf_wr_en = 1'b0;
          $rf_wr_index[4:0] = 5'b0;
          $rf_wr_data[31:0] = 32'b0;
-         $src1_value1[31:0] = $rf_rd_data1;
-         $src2_value1[31:0] = $rf_rd_data2;
+         $src1_value[31:0] = $rf_rd_data1;
+         $src2_value[31:0] = $rf_rd_data2;
+         //ALU signal
+         $result[31:0] = 
+                         $is_addi ? $src1_value + $imm:
+                         $is_add ? $src2_value + $src2_value:
+                            32'bx;
          
          
          
@@ -136,3 +141,4 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
