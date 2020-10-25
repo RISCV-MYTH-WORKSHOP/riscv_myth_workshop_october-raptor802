@@ -1,10 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // LAB: TESTBENCH SLIDE # 25
-   // RESULT: SIMULATION PASSED
-   // AT 35th CLOCK CYCLE I am Getting Correct output of 45
-   // I have Corrected Errors in Instruction decode, Branch and Branch target prediction
-   // I will correct them in previous posted files also
+   // Day-5
+  //LAB: 3-Cycle Valid Slide # 33
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -44,6 +41,10 @@
    |cpu
       @0
          $reset = *reset;
+         $start = (>>1$reset)&&(!$reset);// Reset last cycle but not this cycle
+         $valid = $reset ? 1'b0:
+                  $start ? 1'b1:
+                  >>3$valid;
          $pc[31:0] = 
                      >>1$reset ? 32'b0:
                      >>1$taken_br ? >>1$br_tgt_pc:
@@ -162,3 +163,4 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
