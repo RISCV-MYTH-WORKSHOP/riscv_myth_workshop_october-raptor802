@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
-   // Day-5
-  //LAB: 3-Cycle RISC -V PART -1 Slide # 36
+   // Day -5
+   // Lab: 3-CYCLE RISC - V PART -2 SLIDE # 37
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -103,6 +103,8 @@
          $is_add  = $dec_bits ==?11'bx_000_0110011;
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu $is_addi)
+         
+      @2
          // register file read signal assignments
          $rf_rd_index1[4:0] = $rs1;
          $rf_rd_index2[4:0] = $rs2;
@@ -111,6 +113,8 @@
          $rf_rd_en2 = $rs2_valid;
          $src1_value[31:0] = $rf_rd_data1;
          $src2_value[31:0] = $rf_rd_data2;
+         $br_tgt_pc[31:0] = $pc + $imm;
+      @3
          //ALU signal
          $result[31:0] = 
                          $is_addi ? $src1_value + $imm:
@@ -130,17 +134,13 @@
                      $is_bgeu ? ($src1_value >= $src2_value):
                         1'b0;
          $valid_taken_br = $valid && $taken_br;
-         $br_tgt_pc[31:0] = $pc + $imm;
          
          
-         
-         
-                      
-                      
 
 
 
-      
+      // YOUR CODE HERE
+      // ...
 
       // Note: Because of the magic we are using for visualisation, if visualisation is enabled below,
       //       be sure to avoid having unassigned signals (which you might be using for random inputs)
@@ -148,8 +148,7 @@
 
    
    // Assert these to end simulation (before Makerchip cycle limit).
-   //*passed = *cyc_cnt > 40;
-   *passed = |cpu/xreg[10]>>5$value == (1+2+3+4+5+6+7+8+9);
+   *passed = *cyc_cnt > 40;
    *failed = 1'b0;
    
    // Macro instantiations for:
@@ -159,11 +158,12 @@
    //  o CPU visualization
    |cpu
       m4+imem(@1)    // Args: (read stage)
-      m4+rf(@1, @1)  // Args: (read stage, write stage) - if equal, no register bypass is required
+      m4+rf(@2, @3)  // Args: (read stage, write stage) - if equal, no register bypass is required
       //m4+dmem(@4)    // Args: (read/write stage)
    
    m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
                        // @4 would work for all labs
 \SV
    endmodule
+
 
