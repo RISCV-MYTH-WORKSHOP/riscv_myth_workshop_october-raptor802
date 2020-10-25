@@ -45,12 +45,12 @@
          $valid = $reset ? 1'b0:
                   $start ? 1'b1:
                   >>3$valid;
-         
+         $inc_pc[31:0] = $pc + 32'd4;
          $pc[31:0] = 
-                     >>1$reset ? 32'b0:
-                     >>3$taken_br ? >>3$br_tgt_pc:
+                     >>1$reset ? '0:
+                     >>3$valid_taken_br ? >>3$br_tgt_pc:
                      >>3$inc_pc;
-         $inc_pc[31:0] = $pc + 32d'd4; 
+          
                      
       @1   
          $imem_rd_en =    !$reset;
@@ -129,7 +129,7 @@
                      $is_bltu ? ($src1_value < $src2_value):
                      $is_bgeu ? ($src1_value >= $src2_value):
                         1'b0;
-         $valid_taken_br = ($valid) && ($taken_br);
+         $valid_taken_br = $valid && $taken_br;
          $br_tgt_pc[31:0] = $pc + $imm;
          
          
