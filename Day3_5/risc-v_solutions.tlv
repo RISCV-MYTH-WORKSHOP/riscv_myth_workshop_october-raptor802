@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: REDIRECT LOADS # 48
+   // Lab: DATA MEMORY INSTANTIATION SLIDE # 51
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -149,7 +149,7 @@
          $sltiu_rslt = $src1_value < $imm;
          
          $result[31:0] = 
-                         $is_addi ? $src1_value + $imm:
+                         ($is_addi || $is_load || $is_s_instr) ? $src1_value + $imm:
                          $is_add ? $src1_value + $src2_value:
                          $is_andi ? $src1_value & $imm:
                          $is_ori ? $src1_value | $imm:
@@ -177,9 +177,9 @@
                          
                             
          // register file write signal assignments
-         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid)&&($valid);// write only for valid instructions
-         $rf_wr_index[4:0] = $rd;
-         $rf_wr_data[31:0] = $result;
+         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid)&&($valid) || >>2$valid;// write only for valid instructions
+         $rf_wr_index[4:0] = >>2$valid_load ? >>2$rd: $rd;
+         $rf_wr_data[31:0] = >>2$valid_load ? >>2$ld_data: $result;
          //Branch Instruction Implementation
          $taken_br = 
                      $is_beq ? ($src1_value == $src2_value):
@@ -190,6 +190,12 @@
                      $is_bgeu ? ($src1_value >= $src2_value):
                         1'b0;
          $valid_taken_br = $valid && $taken_br;
+      @4
+         $dmem_addr[3:0] = $result[5:2];
+         $dmem_rd_en = $is_load;
+         $dmem_wr_en = $is_s_instr && $valid;
+         $dmem_wr_data = $src2_value;
+         $ld_data[31:0] = $dmem_rd_data;
          
          
 
@@ -215,11 +221,10 @@
    |cpu
       m4+imem(@1)    // Args: (read stage)
       m4+rf(@2, @3)  // Args: (read stage, write stage) - if equal, no register bypass is required
-      //m4+dmem(@4)    // Args: (read/write stage)
+      m4+dmem(@4)    // Args: (read/write stage)
    
    m4+cpu_viz(@4)    // For visualisation, argument should be at least equal to the last stage of CPU logic
                        // @4 would work for all labs
 \SV
    endmodule
-
 
