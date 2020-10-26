@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: COMPLETE ALU # 45
+   // Lab: REDIRECT LOADS # 48
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -47,6 +47,7 @@
          $pc[31:0] = 
                      >>1$reset ? '0:
                      >>3$valid_taken_br ? >>3$br_tgt_pc:
+                     >>3$valid_load ? >>3$inc_pc: 
                      >>1$inc_pc;
           
                      
@@ -141,7 +142,8 @@
                               $rf_rd_data2;
          $br_tgt_pc[31:0] = $pc + $imm;
       @3
-         $valid = (>>2$valid_taken_br || >>1$valid_taken_br);
+         $valid = !(>>2$valid_taken_br || >>1$valid_taken_br || >>2$valid_load || >>1$valid_load);
+         $valid_load = $valid && $is_load;
          //ALU signal
          $sltu_rslt = $src1_value < $src2_value;
          $sltiu_rslt = $src1_value < $imm;
@@ -219,4 +221,5 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
 
