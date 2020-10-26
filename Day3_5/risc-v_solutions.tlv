@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: REGISTER FILE BYPASS SLIDE # 39
+   // Lab: BRANCHES # 42
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -41,18 +41,17 @@
    |cpu
       @0
          $reset = *reset;
-         $start = (>>1$reset)&&(!$reset);// Reset last cycle but not this cycle
-         $valid = $reset ? 1'b0:
-                  $start ? 1'b1:
-                  >>3$valid;
-         $inc_pc[31:0] = $pc + 32'd4;
+         // $start not required now
+         
+         
          $pc[31:0] = 
                      >>1$reset ? '0:
                      >>3$valid_taken_br ? >>3$br_tgt_pc:
-                     >>3$inc_pc;
+                     >>1$inc_pc;
           
                      
-      @1   
+      @1
+         $inc_pc[31:0] = $pc + 32'd4;
          $imem_rd_en =    !$reset;
          $imem_rd_addr[M4_IMEM_INDEX_CNT-1:0] = $pc[M4_IMEM_INDEX_CNT+1:2];
          $instr[31:0] = $imem_rd_data[31:0] ;
@@ -117,6 +116,7 @@
                               $rf_rd_data2;
          $br_tgt_pc[31:0] = $pc + $imm;
       @3
+         $valid = (>>2$valid_taken_br || >>1$valid_taken_br);
          //ALU signal
          $result[31:0] = 
                          $is_addi ? $src1_value + $imm:
