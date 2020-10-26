@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: DATA MEMORY INSTANTIATION SLIDE # 51
+   // Lab: JUMPS SLIDE # 53
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -33,6 +33,8 @@
    m4_asm(ADDI, r13, r13, 1)            // Increment intermediate register by 1
    m4_asm(BLT, r13, r12, 1111111111000) // If a3 is less than a2, branch to label named <loop>
    m4_asm(ADD, r10, r14, r0)            // Store final result to register a0 so that it can be read by main program
+   m4_asm(SW, r0, r10, 100)
+   m4_asm(LW, r15, r0, 100)
    
    // Optional:
    // m4_asm(JAL, r7, 00000000000000000000) // Done. Jump to itself (infinite loop). (Up to 20-bit signed immediate plus implicit 0 bit (unlike JALR) provides byte address; last immediate bit should also be 0)
@@ -48,7 +50,10 @@
                      >>1$reset ? '0:
                      >>3$valid_taken_br ? >>3$br_tgt_pc:
                      >>3$valid_load ? >>3$inc_pc: 
+                     (>>3$valid_jump && >>3$is_jal) ? >>3$br_tgt_pc:
+                     (>>3$valid_jump && >>3$is_jalr) ? >>3$jalr_tgt_pc: 
                      >>1$inc_pc;
+                     
           
                      
       @1
@@ -141,9 +146,12 @@
          $src2_value[31:0] = (>>1$rf_wr_en)&&(>>1$rf_wr_index == $rf_rd_index2) ? (>>1$result):
                               $rf_rd_data2;
          $br_tgt_pc[31:0] = $pc + $imm;
+         $jalr_tgt_pc[31:0] = $src1_value + $imm;
       @3
-         $valid = !(>>2$valid_taken_br || >>1$valid_taken_br || >>2$valid_load || >>1$valid_load);
+         $valid = !(>>2$valid_taken_br || >>1$valid_taken_br || >>2$valid_load || >>1$valid_load || >>2$valid_jump || >>1$valid_jump);
          $valid_load = $valid && $is_load;
+         $is_jump = $is_jal || $is_jalr;
+         $valid_jump = $is_jump && $valid;
          //ALU signal
          $sltu_rslt = $src1_value < $src2_value;
          $sltiu_rslt = $src1_value < $imm;
@@ -210,7 +218,7 @@
 
    
    // Assert these to end simulation (before Makerchip cycle limit).
-   *passed = *cyc_cnt > 40;
+   //*passed = |cpu/xreg[15]>>2$value = (1+2+3+4+5+6+7+8+9);
    *failed = 1'b0;
    
    // Macro instantiations for:
