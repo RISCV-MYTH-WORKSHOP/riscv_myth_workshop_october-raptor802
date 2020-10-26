@@ -1,7 +1,9 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: JUMPS SLIDE # 53 -- Final Version
+   // Lab: FINAL COMPLETE
+   // CORRECT OUTPUT AT 53rd CLOCK CYCLE
+   // FIXED ALL ERRORS 
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -179,15 +181,15 @@
                          $is_jal ? $pc + 32'd4:
                          $is_jalr ? $pc + 32'd4:
                          $is_srai ? {{32{$src1_value[31]}}, $src1_value} >> $imm[4:0]:
-                         $is_slt ? ($src1_value[31] == $src2_value[31]) ? $sltu_rslt : {31'b0, $src1_value[31]}:
-                         $is_slti ? ($src1_value[31] == $imm[31]) ? $sltiu_rslt : {31'b0, $src1_value[31]}:
+                         $is_slt ? (($src1_value[31] == $src2_value[31]) ? $sltu_rslt : {31'b0, $src1_value[31]}):
+                         $is_slti ? (($src1_value[31] == $imm[31]) ? $sltiu_rslt : {31'b0, $src1_value[31]}):
                          $is_sra ? {{32{$src1_value[31]}}, $src1_value} >> $src2_value[4:0]:
                             32'bx;
                          
                          
                             
          // register file write signal assignments
-         $rf_wr_en = ($rd!= 5'b0)&&($rd_valid)&&($valid) || >>2$valid;// write only for valid instructions
+         $rf_wr_en = ($rd!= 5'b0 && $rd_valid && $valid) || >>2$valid_load;// write only for valid instructions
          $rf_wr_index[4:0] = >>2$valid_load ? >>2$rd: $rd;
          $rf_wr_data[31:0] = >>2$valid_load ? >>2$ld_data: $result;
          //Branch Instruction Implementation
@@ -239,4 +241,5 @@
                        // @4 would work for all labs
 \SV
    endmodule
+
 
