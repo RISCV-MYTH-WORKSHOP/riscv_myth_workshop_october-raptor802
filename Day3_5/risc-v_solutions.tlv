@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: INSTRUCTION DECODE # 44
+   // Lab: COMPLETE ALU # 45
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -143,10 +143,37 @@
       @3
          $valid = (>>2$valid_taken_br || >>1$valid_taken_br);
          //ALU signal
+         $sltu_rslt = $src1_value < $src2_value;
+         $sltiu_rslt = $src1_value < $imm;
+         
          $result[31:0] = 
                          $is_addi ? $src1_value + $imm:
                          $is_add ? $src1_value + $src2_value:
+                         $is_andi ? $src1_value & $imm:
+                         $is_ori ? $src1_value | $imm:
+                         $is_xori ? $src1_value ^ $imm:
+                         $is_slli ? $src1_value << $imm[5:0]:
+                         $is_srli ? $src1_value >> $imm[5:0]:
+                         $is_and ? $src1_value & $src2_value:
+                         $is_or ? $src1_value | $src2_value:
+                         $is_xor ? $src1_value ^ $src2_value:
+                         $is_sub ? $src1_value - $src2_value:
+                         $is_sll ? $src1_value << $src2_value[4:0]:
+                         $is_srl ? $src1_value >> $src2_value[4:0]:
+                         $is_sltu ? $sltu_rslt:
+                         $is_sltiu ? $sltiu_rslt:
+                         $is_lui ? {$imm[31:12], 12'b0}:
+                         $is_auipc ? $pc < $imm:
+                         $is_jal ? $pc + 32'd4:
+                         $is_jalr ? $pc + 32'd4:
+                         $is_srai ? {{32{$src1_value[31]}}, $src1_value} >> $imm[4:0]:
+                         $is_slt ? ($src1_value[31] == $src2_value[31]) ? $sltu_rslt : {31'b0, $src1_value[31]}:
+                         $is_slti ? ($src1_value[31] == $imm[31]) ? $sltiu_rslt : {31'b0, $src1_value[31]}:
+                         $is_sra ? {{32{$src1_value[31]}}, $src1_value} >> $src2_value[4:0]:
                             32'bx;
+                         
+                         
+                            
          // register file write signal assignments
          $rf_wr_en = ($rd!= 5'b0)&&($rd_valid)&&($valid);// write only for valid instructions
          $rf_wr_index[4:0] = $rd;
