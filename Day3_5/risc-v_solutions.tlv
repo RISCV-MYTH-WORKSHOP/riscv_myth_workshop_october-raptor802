@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: JUMPS SLIDE # 53
+   // Lab: JUMPS SLIDE # 53 -- Final Version
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -95,8 +95,12 @@
          $funct3_valid = $is_r_instr||$is_i_instr|| $is_s_instr|| $is_b_instr ;
          ?$funct3_valid
             $funct3[2:0] = $instr[14:12];
-         
          $opcode[6:0] = $instr[6:0];
+         
+         
+      @2
+         // register file read signal assignments
+         $is_load = $opcode == 7'b0000011;
          $dec_bits[10:0] = {$funct7[5],$funct3,$opcode};
          $is_beq = $dec_bits ==? 11'bx_000_1100011;
          $is_bne = $dec_bits ==? 11'bx_001_1100011;
@@ -106,7 +110,7 @@
          $is_bgeu = $dec_bits ==? 11'bx_111_1100011;
          $is_addi = $dec_bits ==? 11'bx_000_0010011;
          $is_add  = $dec_bits ==?11'b0_000_0110011;
-         $is_load = $dec_bits ==? 11'bx_xxx_0000011;
+         
          $is_sb = $dec_bits ==? 11'bx_000_0100011;
          $is_sh = $dec_bits ==? 11'bx_001_0100011;
          $is_sw = $dec_bits ==? 11'bx_010_0100011;
@@ -134,8 +138,6 @@
          
          `BOGUS_USE($is_beq $is_bne $is_blt $is_bge $is_bltu $is_bgeu $is_addi $is_sb $is_sh $is_sw $is_slti $is_sltiu $is_xori $is_ori $is_andi $is_slli $is_srli $is_srai $is_sub $is_sll $is_slt $is_sltu $is_xor $is_srl $is_sra $is_or $is_and $is_lui $is_auipc $is_jal $is_jalr )
          
-      @2
-         // register file read signal assignments
          $rf_rd_index1[4:0] = $rs1;
          $rf_rd_index2[4:0] = $rs2;
          
@@ -203,6 +205,8 @@
          $dmem_rd_en = $is_load;
          $dmem_wr_en = $is_s_instr && $valid;
          $dmem_wr_data = $src2_value;
+      @5
+         
          $ld_data[31:0] = $dmem_rd_data;
          
          
