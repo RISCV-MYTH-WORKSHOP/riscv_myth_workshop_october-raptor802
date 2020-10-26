@@ -1,7 +1,7 @@
 \m4_TLV_version 1d: tl-x.org
 \SV
    // Day -5
-   // Lab: 3-CYCLE RISC - V PART -2 SLIDE # 37
+   // Lab: REGISTER FILE BYPASS SLIDE # 39
    
    m4_include_lib(['https://raw.githubusercontent.com/stevehoover/RISC-V_MYTH_Workshop/c1719d5b338896577b79ee76c2f443ca2a76e14f/tlv_lib/risc-v_shell_lib.tlv'])
 
@@ -111,8 +111,10 @@
          
          $rf_rd_en1 = $rs1_valid;
          $rf_rd_en2 = $rs2_valid;
-         $src1_value[31:0] = $rf_rd_data1;
-         $src2_value[31:0] = $rf_rd_data2;
+         $src1_value[31:0] = (>>1$rf_wr_en)&&(>>1$rf_wr_index == $rf_rd_index1) ? (>>1$result):
+                              $rf_rd_data1;
+         $src2_value[31:0] = (>>1$rf_wr_en)&&(>>1$rf_wr_index == $rf_rd_index2) ? (>>1$result):
+                              $rf_rd_data2;
          $br_tgt_pc[31:0] = $pc + $imm;
       @3
          //ALU signal
@@ -165,5 +167,4 @@
                        // @4 would work for all labs
 \SV
    endmodule
-
 
